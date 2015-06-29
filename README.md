@@ -1,4 +1,4 @@
-BkrChatReload
+DevChat
 =============
 
-Plugin for Minecraft!
+Plugin for Minecraft. Reborn version BkrChatReload.
