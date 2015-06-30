@@ -4,60 +4,68 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.plugin.Plugin;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
-import ru.BeYkeRYkt.DevChat.api.events.ChannelUserEvent;
+import ru.BeYkeRYkt.DevChat.api.channels.IUser;
+import ru.BeYkeRYkt.DevChat.api.events.DevChatReplaceWordEvent;
 
 public class ReplacerManager {
-    
-    private Map<String, Replacer> replacers;
-    private Plugin plugin;
-    
-    public ReplacerManager(Plugin plugin) {
-        this.plugin = plugin;
-        this.replacers = new HashMap<String, Replacer>();
-    }
-    
-    public Plugin getPlugin(){
-        return plugin;
-    }
 
-    public Collection<Replacer> getReplacers(){
+    private static Map<String, Replacer> replacers = new HashMap<String, Replacer>();
+
+    public static Collection<Replacer> getReplacers() {
         return replacers.values();
     }
-    
-    public boolean registerReplacer(Replacer replacer){
-        if(replacers.containsKey(replacer.getReplacerWords())){
+
+    public static boolean registerReplacer(Replacer replacer) {
+        if (replacers.containsKey(replacer.getDetectWord())) {
             return false;
         }
-        replacers.put(replacer.getReplacerWords(), replacer);
+        replacers.put(replacer.getDetectWord(), replacer);
         return true;
     }
-    
-    public boolean unregisterReplacer(String replacerWords){
-        if(replacers.containsKey(replacerWords)){
+
+    public static boolean unregisterReplacer(String replacerWords) {
+        if (replacers.containsKey(replacerWords)) {
             return false;
         }
         replacers.remove(replacerWords);
         return true;
     }
-    
-    public Replacer getReplacer(String replacerWords){
+
+    public static Replacer getReplacer(String replacerWords) {
         return replacers.get(replacerWords);
     }
-    
-    public String replace(ChannelUserEvent event){
-        String[] list = event.getMessage().split("\\.");
-        for(String word: list){
-            if(hasReplacer(word)){
+
+    public static String replace(String message, IUser user) {
+        // String[] list = message.split(" ");
+        // for(String word: list){
+        // if(hasReplacer(word)){
+        // Replacer replacer = getReplacer(word);
+        // message = message.replace(replacer.getDetectWord(),
+        // replacer.getReplaceWord(message, user));
+        // }
+        // }
+        DevChatReplaceWordEvent event = new DevChatReplaceWordEvent(user, message);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            for (String word : replacers.keySet()) {
                 Replacer replacer = getReplacer(word);
-                replacer.replace(event);
+                // message =
+                // event.getMessage().replace(replacer.getDetectWord(),
+                // replacer.getReplaceWord(event.getMessage(), user));
+                event.setMessage(event.getMessage().replace(replacer.getDetectWord(), replacer.getReplaceWord(event.getMessage(), user)));
             }
+            // message = ChatColor.translateAlternateColorCodes('&',
+            // event.getMessage());
+            event.setMessage(ChatColor.translateAlternateColorCodes('&', event.getMessage()));
         }
         return event.getMessage();
     }
 
-    public boolean hasReplacer(String word) {
+    public static boolean hasReplacer(String word) {
         return getReplacer(word) != null;
     }
 }

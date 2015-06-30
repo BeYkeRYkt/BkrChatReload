@@ -1,28 +1,30 @@
 package ru.BeYkeRYkt.DevChat.api;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import ru.BeYkeRYkt.DevChat.api.group.IGroupChat;
-import ru.BeYkeRYkt.DevChat.api.group.IUser;
-import ru.BeYkeRYkt.DevChat.api.replacer.ReplacerManager;
+import ru.BeYkeRYkt.DevChat.api.channels.IChannel;
+import ru.BeYkeRYkt.DevChat.api.channels.IUser;
 
 public interface IDevChatManager {
-    
-    public Collection<IGroupChat> getGroupChats();
-    
-    public void registerGroup(IGroupChat chat);
-    
-    public void unregisterGroup(String id);
-    
-    public IGroupChat getGroupChat(String id);
-    
+
+    public Collection<IChannel> getChannels();
+
+    public void registerChannel(IChannel chat);
+
+    public void unregisterChannel(String id);
+
+    public IChannel getChannel(String id);
+
     public IUser loadUser(Player player);
-    
+
     public void saveUser(IUser user);
-    
+
     public Collection<IUser> getUsers();
-    
-    public ReplacerManager getReplacerManager();
+
+    public IUser getUser(UUID uuid);
+
+    public IUser getUser(Player player);
 }

@@ -1,11 +1,11 @@
 package ru.BeYkeRYkt.DevChat.api.replacer;
 
-import ru.BeYkeRYkt.DevChat.api.events.ChannelUserEvent;
+import ru.BeYkeRYkt.DevChat.api.channels.IUser;
 
 public interface Replacer {
-    
-    public String getReplacerWords();
-    
-    public void replace(ChannelUserEvent channel);
-    
+
+    public String getDetectWord();
+
+    public String getReplaceWord(String message, IUser user);
+
 }

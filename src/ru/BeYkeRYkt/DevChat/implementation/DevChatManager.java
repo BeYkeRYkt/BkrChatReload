@@ -3,48 +3,49 @@ package ru.BeYkeRYkt.DevChat.implementation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import ru.BeYkeRYkt.DevChat.api.IDevChatManager;
-import ru.BeYkeRYkt.DevChat.api.group.IGroupChat;
-import ru.BeYkeRYkt.DevChat.api.group.IUser;
-import ru.BeYkeRYkt.DevChat.api.replacer.ReplacerManager;
+import ru.BeYkeRYkt.DevChat.api.channels.IChannel;
+import ru.BeYkeRYkt.DevChat.api.channels.IUser;
+import ru.BeYkeRYkt.DevChat.implementation.channels.User;
 
-public class DevChatManager implements IDevChatManager{
+public class DevChatManager implements IDevChatManager {
 
-    private List<IGroupChat> chats;
-    private ReplacerManager replacerManager;
+    private List<IChannel> chats;
+    private List<IUser> users;
 
     public DevChatManager(Plugin plugin) {
-        this.chats = new ArrayList<IGroupChat>();
-        this.replacerManager = new ReplacerManager(plugin);
+        this.chats = new ArrayList<IChannel>();
+        this.users = new ArrayList<IUser>();
     }
-    
+
     @Override
-    public Collection<IGroupChat> getGroupChats() {
+    public Collection<IChannel> getChannels() {
         return chats;
     }
 
     @Override
-    public void registerGroup(IGroupChat chat) {
-        if(getGroupChat(chat.getId()) == null){
+    public void registerChannel(IChannel chat) {
+        if (getChannel(chat.getId()) == null) {
             chats.add(chat);
         }
     }
 
     @Override
-    public void unregisterGroup(String id) {
-        if(getGroupChat(id) == null){
+    public void unregisterChannel(String id) {
+        if (getChannel(id) == null) {
             chats.remove(id);
         }
     }
 
     @Override
-    public IGroupChat getGroupChat(String id) {
-        for(IGroupChat chat: getGroupChats()){
-            if(chat.getId().equals(id)){
+    public IChannel getChannel(String id) {
+        for (IChannel chat : getChannels()) {
+            if (chat.getId().equals(id)) {
                 return chat;
             }
         }
@@ -53,24 +54,35 @@ public class DevChatManager implements IDevChatManager{
 
     @Override
     public IUser loadUser(Player player) {
-        // TODO Auto-generated method stub
-        return null;
+        IUser user = getUser(player);
+        if (user == null) {
+            user = new User(player);
+            users.add(user);
+        }
+        return user;
     }
 
     @Override
     public void saveUser(IUser user) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
     public Collection<IUser> getUsers() {
-        // TODO Auto-generated method stub
+        return users;
+    }
+
+    @Override
+    public IUser getUser(UUID uuid) {
+        for (IUser user : users) {
+            if (user.getUUID().equals(uuid)) {
+                return user;
+            }
+        }
         return null;
     }
 
     @Override
-    public ReplacerManager getReplacerManager() {
-        return replacerManager;
-    }    
+    public IUser getUser(Player player) {
+        return getUser(player.getUniqueId());
+    }
 }

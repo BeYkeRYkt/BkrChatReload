@@ -1,0 +1,6 @@
+name: DevChat
+main: ru.BeYkeRYkt.DevChat.DevChat
+author: BeYkeRYkt
+version: 1.0
+description: UNKNOWN
+depend: [Vault]
